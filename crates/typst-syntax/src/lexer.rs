@@ -422,7 +422,9 @@ impl Lexer<'_> {
             '|' if self.s.eat_if('|') => SyntaxKind::Shorthand,
             '~' if self.s.eat_if("~>") => SyntaxKind::Shorthand,
             '~' if self.s.eat_if('>') => SyntaxKind::Shorthand,
-            '*' | '-' => SyntaxKind::Shorthand,
+            '*' | '-' | '⇒' | '→' | '×' | '⇔' | '∀' | '∃'
+                | '∈' | '¬' | '∩' | '∪' | '⊆' | '⊂' | '∧'
+                | '∨' | '◦' | '↦' | '≠' | '•' => SyntaxKind::Shorthand,
 
             '#' => SyntaxKind::Hashtag,
             '_' => SyntaxKind::Underscore,
@@ -720,16 +722,18 @@ pub fn is_id_start(c: char) -> bool {
     is_xid_start(c) || c == '_'
 }
 
+static GREEK_ALPHABET: &str = "ΑαΒβΓγΔδΕεΖζΗηΘθΙιΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω";
+
 /// Whether a character can continue an identifier.
 #[inline]
 pub fn is_id_continue(c: char) -> bool {
-    is_xid_continue(c) || c == '_' || c == '-'
+    is_xid_continue(c) || c == '_' || c == '-' || GREEK_ALPHABET.contains(c)
 }
 
 /// Whether a character can start an identifier in math.
 #[inline]
 fn is_math_id_start(c: char) -> bool {
-    is_xid_start(c)
+    is_xid_start(c) || GREEK_ALPHABET.contains(c)
 }
 
 /// Whether a character can continue an identifier in math.
